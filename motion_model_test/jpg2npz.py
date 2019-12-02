@@ -35,3 +35,19 @@ for dir in dirList:
             #print(savePath+"/"+str(10000+idx)+".npz")
             np.savez(savePath+"/"+str(10000+idx)+".npz", train=shrink, training_labels=encoding )
             idx+=1
+
+
+def jpg2npz(size=(), path=(), IMREAD_TYPE, refDir=[], names=[]):
+'''
+IMREAD_TYPE = 0 : read files as COLOR
+IMREAD_TYPE = 1 : GREY_SCALE
+'''
+    if IMREAD_TYPE ==0:
+        cv2.imread(original_file+"/"+original_file+real_file, cv2.IMREAD_COLOR)
+    else:
+        imrea(original_file+"/"+original_file+real_file,cv2.IMREAD_GRAYSCALE)
+
+if __name__ == '__main__':
+
+    jpg2npz((64,64), ('/home/pirl/Documents/splited_action_data2','/home/pirl/Documents/splited_action_data2/npz_data15'),
+            IMREAD_TYPE=0, ['fp','lr','rl'],['train','training_lables'])
