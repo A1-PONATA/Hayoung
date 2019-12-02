@@ -5,7 +5,7 @@ import cv2
 #import xml.etree.ElemntTree as ET
 
 print("Package loaded")
-labels={"fastpass":0, "left2right":1, "right2left":2}
+labels={"fp":0, "lr":1, "rl":2}
 cwd = os.getcwd()
 
 
@@ -13,10 +13,10 @@ cwd = os.getcwd()
 #print("Current folder is %s"%cwd)
 
 imgpath = "/home/pirl/Documents/splited_action_data2"
-savePath = "/home/pirl/Documents/splited_action_data2/npz_data"
+savePath = "/home/pirl/Documents/splited_action_data2/npz_data15"
 idx=0
 
-dirList=['fastpass','left2right','right2left']
+dirList=['fp','lr','rl']
 for dir in dirList:
 
     origin_path = imgpath+'/'+dir
@@ -27,7 +27,7 @@ for dir in dirList:
         for real_file in os.listdir(origin_path+'/'+original_file):
             #print(origin_path + "/" + original_file+"/"+real_file)
             #print(savePath+"/"+original_file.split('.')[0]+".npz")
-            img = cv2.imread(origin_path + "/" + original_file+"/"+real_file, cv2.IMREAD_GRAYSCALE)
+            img = cv2.imread(origin_path + "/" + original_file+"/"+real_file, cv2.IMREAD_COLOR)
             shrink = cv2.resize(img,(64,64), None, interpolation=cv2.INTER_AREA)
             #print(shrink.shape)
             encoding = np.eye(3)[labels[dir]]
