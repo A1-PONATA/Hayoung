@@ -11,6 +11,7 @@ counter = 1
 
 def getVideo():
     global counter,model
+    counter+=1
     cap = cv2.VideoCapture(0)
 
     while(True):
@@ -20,17 +21,16 @@ def getVideo():
         # frame resize
         frame = cv2.resize(frame,(64,64), None, interpolation=cv2.INTER_AREA)
         # Our operations on the frame come here
-
-        gray = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
-        gray=gray.reshape(1,64,64,3)
+        #gray = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
+        #gray=gray.reshape(1,64,64,3)
 
 
         #print(model)
         #prediction=model.predict(gray)
-        #print(prediction)
+        #print(prediction)wqqqqqq
 
-        # Display the resulting frame-+
-        cv2.imshow('frame',gray)
+        # Display the resulting frame-
+        cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
@@ -40,6 +40,7 @@ def getVideo():
 
 def predict():
     global counter
+    counter-=1
     print(counter)
 
 
@@ -78,13 +79,16 @@ def main():
     print("Execution Time {}".format(t1-t0))
 
 if __name__=="__main__":
-    with open('/home/pirl/A1-PONATA/Hayoung/motion_model_test/model_test.json','r') as f:
-        model_json = json.load(f)
-        s1 = json.dumps(model_json)
-        model_json = json.loads(s1)
-        model_json=json.dumps(model_json)
-    model = model_from_json(model_json)
-    model.load_weights('/home/pirl/A1-PONATA/Hayoung/motion_model_test/model_test.h5')
 
+    # model = tensorflow.Model.loadLayersModel('/home/pirl/A1-PONATA/Hayoung/motion_model_test/model_test.h5')
+    #
+    # with open('/home/pirl/A1-PONATA/Hayoung/motion_model_test/model_test.json','r') as f:
+    #     model_json = json.load(f)
+    #     s1 = json.dumps(model_json)
+    #     model_json = json.loads(s1)
+    #     model_json=json.dumps(model_json)
+    # model = tf.import_graph_def(model_json)
+    # model.load_weights('/home/pirl/A1-PONATA/Hayoung/motion_model_test/model_test.h5')
+    #
 
     main()
