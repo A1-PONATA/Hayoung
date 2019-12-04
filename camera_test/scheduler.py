@@ -1,16 +1,22 @@
 import threading
 import time
 import random
-from keras.models import load_model
-from keras.models import model_from_json
-import json
 import cv2
-import h5py
-
+from tensorflow.python.keras.models import model_from_yaml
+import tensorflow as tf
 counter = 1
+loaded_model=''
+config = tf.ConfigProto(
+    device_count={'GPU': 1},
+    intra_op_parallelism_threads=1,
+    allow_soft_placement=True
+)
+config.gpu_options.allow_growth = True
+config.gpu_options.per_process_gpu_memory_fraction = 0.6
+session = tf.Session(config=config)
 
 def getVideo():
-    global counter,model
+    global counter,loaded_model
     counter+=1
     cap = cv2.VideoCapture(0)
 
@@ -21,14 +27,23 @@ def getVideo():
         # frame resize
         frame = cv2.resize(frame,(64,64), None, interpolation=cv2.INTER_AREA)
         # Our operations on the frame come here
-        #gray = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
-        #gray=gray.reshape(1,64,64,3)
+        gray = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
+        gray=gray.reshape(1,64,64,3)
+
+        print(gray.shape)
+        print(loaded_model.summary())
+        prediction=loaded_model.predict(gray)
+        print(prediction)
 
 
-        #print(model)
-        #prediction=model.predict(gray)
-        #print(prediction)wqqqqqq
-
+        try:
+                with session.as_default():
+                    with session.graph.as_default():
+                        image_arr = np.array(image_arr).reshape(SEATBEL_INPUT_SHAPE)
+                        predicted_labels = seatbelt_model.predict(image_arr, verbose=1)
+                        return predicted_labels
+            except Exception as ex:
+                log.log('Seatbelt Prediction Error', ex, ex.__traceback__.tb_lineno)
         # Display the resulting frame-
         cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -90,5 +105,17 @@ if __name__=="__main__":
     # model = tf.import_graph_def(model_json)
     # model.load_weights('/home/pirl/A1-PONATA/Hayoung/motion_model_test/model_test.h5')
     #
+
+    #global loaded_model
+
+    # load YAML and create model
+    yaml_file = open('model.yaml', 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    loaded_model = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    loaded_model.load_weights("model.h5")
+    loaded_model._make_predict_function()
+    #print(loaded_model)
 
     main()
