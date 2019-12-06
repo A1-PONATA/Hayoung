@@ -7,7 +7,7 @@ from tensorflow.python.keras.backend import set_session
 from keras import backend as K
 import tensorflow as tf
 import numpy as np
-
+import os
 
 
 counter = 1
@@ -17,6 +17,8 @@ config = tf.ConfigProto(
     intra_op_parallelism_threads=1,
     allow_soft_placement=True
 )
+
+os.environ['CUDA_VISIBLE_DEVICES']='1'
 config.gpu_options.allow_growth = True
 config.gpu_options.per_process_gpu_memory_fraction = 0.6
 
@@ -37,11 +39,10 @@ with tf.Session(config=config) as session:
             ret, frame = cap.read()
 
             # frame resize
-            frame = cv2.resize(frame,(120,320), None, interpolation=cv2.INTER_AREA)
+            frame = cv2.resize(frame,(64,64), None, interpolation=cv2.INTER_AREA)
             # Our operations on the frame come here
-
             gray = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
-            gray=gray.reshape(1,120,320,3)
+            gray=gray.reshape(1,64,64,3)
 
             # print(gray.shape)
             # print(loaded_model.summary())
