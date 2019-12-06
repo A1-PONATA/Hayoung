@@ -118,13 +118,13 @@ with tf.Session(config=config) as session:
             set_session(session)
 
             pred_raw=lane_model.predict(X)
-            if np.argmax(pred_raw)<0.5 : # threashold : 가장 높은 확률로 예측된 class의 확률이 50% 미만이면 go straight
-                pred=0
-            else:
-                pred=np.argmax(pred_raw)
-            #print("predicted value is ",np.argmax(lane_model.predict(X)))
+            # if np.max(pred_raw)<0.8 : # threashold : 가장 높은 확률로 예측된 class의 확률이 50% 미만이면 go straight
+            #     pred=0
+            # else:
+            #     pred=np.argmax(pred_raw)
+            # #print("predicted value is ",np.argmax(lane_model.predict(X)))
 
-            drive_control(pred)
+            drive_control(np.argmax(pred_raw))
 
     def main():
         t0 = time.time()
@@ -159,13 +159,13 @@ with tf.Session(config=config) as session:
         kit.servo[1].angle = 113
 
         # Initialize Model...
-        yaml_file = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v1.yaml', 'r')
+        yaml_file = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.yaml', 'r')
         loaded_model_yaml = yaml_file.read()
         yaml_file.close()
         lane_model = model_from_yaml(loaded_model_yaml)
 
         # load weights into new model
-        lane_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v1.h5")
+        lane_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.h5")
         lane_model._make_predict_function()
 
         print("Initail Settings are done.\n")
