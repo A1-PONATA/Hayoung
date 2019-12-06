@@ -79,22 +79,22 @@ with tf.Session(config=config) as session:
 
 
 
-
-    def workerA():
-        global counter
-        while counter <1000:
-            counter+=1
-            print("Worker A is incrementing counter to {}".format(counter))
-            sleepTime = random.randint(0,1)
-            time.sleep(sleepTime)
-
-    def workerB():
-        global counter
-        while counter > -1000:
-            counter -=1
-            print("Worker B is decrementing counter to {}".format(counter))
-            sleepTime = random.randint(0,1)
-            time.sleep(sleepTime)
+    #
+    # def workerA():
+    #     global counter
+    #     while counter <1000:
+    #         counter+=1
+    #         print("Worker A is incrementing counter to {}".format(counter))
+    #         sleepTime = random.randint(0,1)
+    #         time.sleep(sleepTime)
+    #
+    # def workerB():
+    #     global counter
+    #     while counter > -1000:
+    #         counter -=1
+    #         print("Worker B is decrementing counter to {}".format(counter))
+    #         sleepTime = random.randint(0,1)
+#         time.sleep(sleepTime)
 
     def main():
         t0=time.time()
