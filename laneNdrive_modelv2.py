@@ -125,6 +125,7 @@ with tf.Session(config=config) as session:
             # #print("predicted value is ",np.argmax(lane_model.predict(X)))
 
             drive_control(np.argmax(pred_raw))
+            #sleep(0.05)
 
     def main():
         t0 = time.time()
@@ -156,7 +157,7 @@ with tf.Session(config=config) as session:
 
         # Initialize Donkey car,..
         kit.continuous_servo[0].throttle = 0
-        kit.servo[1].angle = 113
+        kit.servo[1].angle = 107
 
         # Initialize Model...
         yaml_file = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.yaml', 'r')

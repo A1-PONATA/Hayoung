@@ -9,11 +9,7 @@ import os
 import cv2
 import numpy as np
 
-camera = []
-list_set = []
 count = 0
-
-
 
 def gstreamer_pipeline(
     capture_width=120,#1280,
@@ -66,12 +62,12 @@ def show_camera(name , q):
 
 
 if __name__ == "__main__":
-    BUF_SIZE = 4096
+    BUF_SIZE = 1024
     q = queue.Queue(BUF_SIZE)
 
     kit = ServoKit(channels=16)
-    #0~5
-    gamepad = InputDevice('/dev/input/event5')
+    #daily random value : event 0~4
+    gamepad = InputDevice('/dev/input/event2')
 
     print("initial setting")
     target = ['Forward', 'Right', 'Left']
@@ -83,33 +79,17 @@ if __name__ == "__main__":
         if event.type == ecodes.EV_KEY:
             kit.continuous_servo[0].throttle = 0
             keyevent = categorize(event)
+            #Back
             if keyevent.keystate == KeyEvent.key_down:
                 if keyevent.keycode[0] == 'BTN_A':
-                    # t = threading.Thread(target=show_camera, args=("Thread-1", q))
-                    # t.start()
-                    # t.join()
-                    # q.put('Back')
-                    # print("Back")
-                    # #X = q.get()
-                    # file_name = str(int(time.time()))
-                    # directory = "training_data"
-#                     if not os.path.exists(directory):
-#                         os.makedirs(directory)
-#                     try:
-#                         pass
-#                     #    encoding = np.eye(4)['BACK']
-# #                        np.savez(directory + '/' + file_name + '.npz', train=X, train_labels=y)
-#                     except IOError as e:
-#                         print(e)
 
                     kit.servo[1].angle = 113
                     kit.continuous_servo[0].throttle = -0.18
-
+                #Forward
                 elif keyevent.keycode[1] == 'BTN_Y':
                     t = threading.Thread(target=show_camera, args=("Thread-1", q))
                     t.start()
                     t.join()
-                    # q.put('Forward')
                     print("Forward")
 
                     X = q.get()
@@ -123,14 +103,13 @@ if __name__ == "__main__":
                     except IOError as e:
                         print(e)
                     kit.servo[1].angle = 107#113
-                    kit.continuous_servo[0].throttle = 0.18
+                    kit.continuous_servo[0].throttle = 0.2
 
 
                 elif keyevent.keycode[0] == 'BTN_B':
                     t = threading.Thread(target=show_camera, args=("Thread-1", q))
                     t.start()
                     t.join()
-                    # q.put('Right')
                     print("Right")
                     X = q.get()
                     file_name = str(int(time.time()))
@@ -151,7 +130,6 @@ if __name__ == "__main__":
                     t = threading.Thread(target=show_camera, args=("Thread-1", q))
                     t.start()
                     t.join()
-                    # q.put('Left')
                     print("Left")
                     X = q.get()
                     file_name = str(int(time.time()))
