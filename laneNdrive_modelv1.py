@@ -118,13 +118,13 @@ with tf.Session(config=config) as session:
             set_session(session)
 
             pred_raw=lane_model.predict(X)
-            if np.argmax(pred_raw)<0.5 : # threashold : 가장 높은 확률로 예측된 class의 확률이 50% 미만이면 go straight
-                pred=0
-            else:
-                pred=np.argmax(pred_raw)
-            #print("predicted value is ",np.argmax(lane_model.predict(X)))
+            # if np.max(pred_raw)<0.8 : # threashold : 가장 높은 확률로 예측된 class의 확률이 50% 미만이면 go straight
+            #     pred=0
+            # else:
+            #     pred=np.argmax(pred_raw)
+            # #print("predicted value is ",np.argmax(lane_model.predict(X)))
 
-            drive_control(pred)
+            drive_control(np.argmax(pred_raw))
 
     def main():
         t0 = time.time()
