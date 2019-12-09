@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../.idea/A1-PONATA.iml" filepath="$PROJECT_DIR$/../.idea/A1-PONATA.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Hayoung.iml" filepath="$PROJECT_DIR$/.idea/Hayoung.iml" />
+      <module fileurl="file://$USER_HOME$/ServoKit/.idea/ServoKit.iml" filepath="$USER_HOME$/ServoKit/.idea/ServoKit.iml" />
       <module fileurl="file://$PROJECT_DIR$/../public/.idea/public.iml" filepath="$PROJECT_DIR$/../public/.idea/public.iml" />
     </modules>
   </component>

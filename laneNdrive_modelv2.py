@@ -91,17 +91,24 @@ with tf.Session(config=config) as session:
         if dir == 0:
             # Forward(Straight)
             kit.servo[1].angle = 107
-            kit.continuous_servo[0].throttle = 0.18
+            kit.continuous_servo[0].throttle = 0.25
+            time.sleep(0.5)
+            kit.continuous_servo[0].throttle = 0
             return
         elif dir ==1:
             # Right
             kit.servo[1].angle = 85
-            kit.continuous_servo[0].throttle = 0.18
+            kit.continuous_servo[0].throttle = 0.2
+            time.sleep(0.5)
+            kit.continuous_servo[0].throttle = 0
             return
         elif dir ==2:
             # Left
             kit.servo[1].angle = 145
-            kit.continuous_servo[0].throttle = 0.18
+            kit.continuous_servo[0].throttle = 0.2
+            time.sleep(0.5)
+            kit.continuous_servo[0].throttle = 0
+
             return
 
         elif dir ==3:

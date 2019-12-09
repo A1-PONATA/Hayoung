@@ -11,6 +11,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.keras.models import model_from_yaml
 from tensorflow.python.keras.backend import set_session
+from Hayoung.module import ultraSonic
 
 
 ## GLOBAL VARIABLES...
@@ -91,17 +92,24 @@ with tf.Session(config=config) as session:
         if dir == 0:
             # Forward(Straight)
             kit.servo[1].angle = 107
-            kit.continuous_servo[0].throttle = 0.18
+            kit.continuous_servo[0].throttle = 0.25
+            time.sleep(0.5)
+            kit.continuous_servo[0].throttle = 0
             return
         elif dir ==1:
             # Right
             kit.servo[1].angle = 85
-            kit.continuous_servo[0].throttle = 0.18
+            kit.continuous_servo[0].throttle = 0.2
+            time.sleep(0.5)
+            kit.continuous_servo[0].throttle = 0
             return
         elif dir ==2:
             # Left
             kit.servo[1].angle = 145
-            kit.continuous_servo[0].throttle = 0.18
+            kit.continuous_servo[0].throttle = 0.2
+            time.sleep(0.5)
+            kit.continuous_servo[0].throttle = 0
+
             return
 
         elif dir ==3:
@@ -111,8 +119,9 @@ with tf.Session(config=config) as session:
             return
 
     def predict():
-        global lane_model,q
+        global lane_model,q,ir
         X = q.get()
+        IR = ir.get()
 
         with graph.as_default():
             set_session(session)
@@ -123,30 +132,53 @@ with tf.Session(config=config) as session:
             # else:
             #     pred=np.argmax(pred_raw)
             # #print("predicted value is ",np.argmax(lane_model.predict(X)))
+            print(IR)
+            if IR:
+                drive_control(np.argmax(pred_raw))
+            else:
+                kit.continuous_servo[0].throttle = 0
+                kit.servo[1].angle = 107
+                #     motion model !
+                time.sleep(1)
+            #sleep(0.05)
 
-            drive_control(np.argmax(pred_raw))
+    def check_dist():
+        global ir
+
+
+        dist = ultraSonic.distance()
+        print(dist)
+        if dist < 40:
+        # stop
+            ir.put(False)
+        else:
+        # keep run
+            ir.put(True)
 
     def main():
         t0 = time.time()
         thread1 = threading.Thread(target=show_camera)
         thread2 = threading.Thread(target=predict)
+        thread3 = threading.Thread(target=check_dist)
 
         thread1.start()
         thread2.start()
+        thread3.start()
 
         thread1.join()
         thread2.join()
+        thread3.join()
 
         t1 = time.time()
 
         print("Execution Time {}".format(t1-t0))
 
-
     if __name__ == "__main__":
-        kit, gamepad,q=[None,None,None]
+        kit, gamepad, q, ir=[None, None,None,None]
 
         BUF_SIZE = 4096
         q = queue.Queue(BUF_SIZE)
+        ir = queue.Queue(BUF_SIZE)
 
         kit = ServoKit(channels=16)
         #gamepad =InputDevice('/dev/input/event4')
@@ -154,21 +186,22 @@ with tf.Session(config=config) as session:
         # target = ['Forward', 'Right', 'Left']
         # labels ={'Forward':0, 'Right':1, 'Left':2}
 
+        # Initialize Donkey car,..
+        kit.continuous_servo[0].throttle = 0
+        kit.servo[1].angle = 107
 
         # Initialize Model...
-        yaml_file = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v1.yaml', 'r')
+        yaml_file = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.yaml', 'r')
         loaded_model_yaml = yaml_file.read()
         yaml_file.close()
         lane_model = model_from_yaml(loaded_model_yaml)
 
         # load weights into new model
-        lane_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v1.h5")
+        lane_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.h5")
         lane_model._make_predict_function()
 
         print("Initail Settings are done.\n")
-        # Initialize Donkey car,..
-        kit.continuous_servo[0].throttle = 0
-        kit.servo[1].angle = 113
+
 
         # START THREAD
         while True:

@@ -4,7 +4,6 @@ import random
 import cv2
 from tensorflow.python.keras.models import model_from_yaml
 from tensorflow.python.keras.backend import set_session
-from keras import backend as K
 import tensorflow as tf
 import numpy as np
 import os
@@ -127,7 +126,7 @@ with tf.Session(config=config) as session:
         #global loaded_model
 
         # load YAML and create model
-        yaml_file = open('model.yaml', 'r')
+        yaml_file = open('/home/ponata/A1-PONATA/Hayoung/camera_test/model.yaml', 'r')
         loaded_model_yaml = yaml_file.read()
         yaml_file.close()
         loaded_model = model_from_yaml(loaded_model_yaml)
