@@ -16,8 +16,8 @@ import cv2
 def gstreamer_pipeline(
     capture_width=120,
     capture_height=320,
-    display_width=120,
-    display_height=320,
+    display_width=640,
+    display_height=640,
     framerate=10,
     flip_method=0,
 ):
@@ -41,7 +41,7 @@ def gstreamer_pipeline(
     )
 
 
-def show_camera(cnt):
+def show_camera(cnt=0):
     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
     print(gstreamer_pipeline(flip_method=0))
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=2), cv2.CAP_GSTREAMER)
@@ -51,8 +51,8 @@ def show_camera(cnt):
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret_val, img = cap.read()
             if cnt % 5000 ==0:
-                print("CSI-cam",img)
-            #cv2.imshow("CSI Camera", img)
+                print("CSI-cam",img[0,0])
+            cv2.imshow("CSI Camera", img)
             # This also acts as
             keyCode = cv2.waitKey(30) & 0xFF
             # Stop the program on the ESC key

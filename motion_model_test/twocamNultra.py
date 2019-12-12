@@ -1,3 +1,4 @@
+
 from evdev import InputDevice, categorize, ecodes, KeyEvent
 from adafruit_servokit import ServoKit
 import inputs
@@ -11,7 +12,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.keras.models import model_from_yaml
 from tensorflow.python.keras.backend import set_session
-from Hayoung.module import ultraSonic
+from Hayoung.module import ultraSonic, webcam_conn
 
 ## GLOBAL VARIABLES...
 
@@ -87,55 +88,29 @@ with tf.Session(config=config) as session:
         else:
             print("Unable to open camera")
 
-
-    def human_detect():
-        global q2
-        dispW = 320
-        dispH = 320
-        flip = 2
-
-        # Or, if you have a WEB cam, uncomment the next line
-        # (If it does not work, try setting to '1' instead of '0')
-        cam = cv2.VideoCapture(1)
-        cam.set(cv2.CAP_PROP_FPS, 10)
-        cam.set(3, 320)  # 3 : width
-        cam.set(4, 320)  # 4 : height
-        # time.sleep(0.1)
-        ret, frame = cam.read()
-        t1 = time.time()
-        while True:
-            if time.time() - t1 > 3 :
-                break
-            ret, frame = cam.read()
-
-            time.sleep(0.1)
-            q2.put(frame)
-            #cv2.imshow('nanoCam', frame)
-
-        cam.release()
-        cv2.destroyAllWindows()
-
-
     def drive_control(dir):
         if dir == 0:
             # Forward(Straight)
+            print("DRIVE : STRATIGHT")
             kit.servo[1].angle = 107
             kit.continuous_servo[0].throttle = 0.25
-            time.sleep(0.25)
+            time.sleep(0.5)
             kit.continuous_servo[0].throttle = 0
             return
         elif dir ==1:
             # Right
+            print("DRIVE : TURN RIGHT")
             kit.servo[1].angle = 85
-            kit.continuous_servo[0].throttle = 0.25
-            time.sleep(0.3)
+            kit.continuous_servo[0].throttle = 0.2
+            time.sleep(0.5)
             kit.continuous_servo[0].throttle = 0
             return
         elif dir ==2:
             # Left
+            print("DRIVE : TURN LEFT")
             kit.servo[1].angle = 145
-            kit.continuous_servo[0].throttle = 0.25
-            time.sleep(0.3)
+            kit.continuous_servo[0].throttle = 0.2
+            time.sleep(0.5)
             kit.continuous_servo[0].throttle = 0
 
             return
@@ -147,7 +122,7 @@ with tf.Session(config=config) as session:
             return
 
     def predict():
-        global lane_model,motion_model,q,ir, q2
+        global lane_model,q,ir
         X = q.get()
         IR = ir.get()
 
@@ -160,29 +135,32 @@ with tf.Session(config=config) as session:
             # else:
             #     pred=np.argmax(pred_raw)
             # #print("predicted value is ",np.argmax(lane_model.predict(X)))
-            print(IR)
+            #print(IR)
             if IR:
                 drive_control(np.argmax(pred_raw))
             else:
                 kit.continuous_servo[0].throttle = 0
                 kit.servo[1].angle = 107
+                #     motion model !
+                time.sleep(1)
 
-                # 1. webcam에서 영상을 받아온다.
-                while q2.empty() is not True:
-                    pred_tmp = q2.get()
-                    pred = motion_model.predict(pred_tmp)
+                web_frame = webcam_conn.human_detect()
+                print(web_frame)
 
-                    if pred == left:
-                        kit.continuous_servo[0].throttle = 0.2
-                        kit.servo[1].angle = 145
-                        time.sleep(1)
-                    time.sleep(0.5)
+            #sleep(0.05)
 
     def check_dist():
         global ir
 
-        dist = ultraSonic.distance()
+        curUltra=[]
+        for i in range(10):
+            curUltra.append(ultraSonic.distance())
+
+        curUltra=np.array(curUltra)
+        dist = np.median(curUltra)
         print(dist)
+
+
         if dist < 40:
         # stop
             ir.put(False)
@@ -200,22 +178,20 @@ with tf.Session(config=config) as session:
         thread2.start()
         thread3.start()
 
-        thread1.join()
-        thread2.join()
         thread3.join()
+        thread2.join()
+        thread1.join()
 
         t1 = time.time()
 
         print("Execution Time {}".format(t1-t0))
 
     if __name__ == "__main__":
-        kit, gamepad, q, ir, q2=[None, None,None,None,None]
+        kit, gamepad, q, ir=[None, None,None,None]
 
         BUF_SIZE = 4096
         q = queue.Queue(BUF_SIZE)
-        q2 = queue.Queue(BUF_SIZE)
         ir = queue.Queue(BUF_SIZE)
-
 
         kit = ServoKit(channels=16)
         #gamepad =InputDevice('/dev/input/event4')
@@ -228,26 +204,17 @@ with tf.Session(config=config) as session:
         kit.servo[1].angle = 107
 
         # Initialize Model...
-        yaml_file1 = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v3-04.yaml', 'r')
-        loaded_model_yaml = yaml_file1.read()
-        yaml_file1.close()
+        yaml_file = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.yaml', 'r')
+        loaded_model_yaml = yaml_file.read()
+        yaml_file.close()
         lane_model = model_from_yaml(loaded_model_yaml)
 
         # load weights into new model
-        lane_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v3-04.h5")
+        lane_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/lane_model_v2.h5")
         lane_model._make_predict_function()
 
-        # Initialize Motion model
-        yaml_file2 = open('/home/ponata/A1-PONATA/Hayoung/lane_model_test/motion_model.yaml', 'r')
-        loaded_model_yaml = yaml_file2.read()
-        yaml_file2.close()
-        motion_model = model_from_yaml(loaded_model_yaml)
-
-        # load weights into new model
-        motion_model.load_weights("/home/ponata/A1-PONATA/Hayoung/lane_model_test/motion_model.h5")
-        motion_model._make_predict_function()
-
         print("Initail Settings are done.\n")
+
 
         # START THREAD
         while True:

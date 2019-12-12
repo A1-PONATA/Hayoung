@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     kit = ServoKit(channels=16)
     #daily random value : event 0~4
-    gamepad = InputDevice('/dev/input/event2')
+    gamepad = InputDevice('/dev/input/event5')
 
     print("initial setting")
     target = ['Forward', 'Right', 'Left']

@@ -51,3 +51,6 @@ def show_camera():
         # cv2.destroyAllWindows()
     else:
         print("Unable to open camera")
+
+
+show_camera()
