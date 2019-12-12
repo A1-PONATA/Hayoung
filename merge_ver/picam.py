@@ -1,4 +1,5 @@
 import cv2
+import time
 
 
 def gstreamer_pipeline(
@@ -41,7 +42,7 @@ def show_camera():
             # Stop the program on the ESC key
             if keyCode == 27:
                 break
-            q.put(img)
+            #q.put(img)
 
             time.sleep(0.05)
 
@@ -52,5 +53,4 @@ def show_camera():
     else:
         print("Unable to open camera")
 
-
-show_camera()
+    return img
