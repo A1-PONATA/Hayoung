@@ -70,6 +70,8 @@ def predict():
                 kit.servo[1].angle, kit.continuous_servo[0].throttle=drive_control.control(np.argmax(pred_raw))
                 kit.continuous_servo[0].throttle, t=drive_control.sleep()
                 time.sleep(t)
+
+
                 mylogger.info('Lane model prediction value is '+str(np.argmax(pred_raw)))
                 #print("LANE MODEL PREDICTION IS ", np.argmax(pred_raw), "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
             else:
@@ -77,7 +79,7 @@ def predict():
                 if not q2.empty():
                     motion = q2.get()
                     print("MOTION MODEL IS CALLED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                       # kit.continuous_servo[0].throttle = 0
+                    # kit.continuous_servo[0].throttle = 0
                     # kit.servo[1].angle = 107
                     pred = np.argmax(motion_model.predict(motion))
                     mylogger.info('Motion model prediction value is '+str(np.argmax(pred)))

@@ -15,3 +15,6 @@ def load_model(path):
     model._make_predict_function()
 
     return model
+
+print(load_model(['/home/pirl/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV2-1.yaml',
+            '/home/pirl/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV2-1.h5']))
