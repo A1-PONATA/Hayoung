@@ -156,8 +156,8 @@ if __name__ == "__main__":
     lane_model = lm.load_model(lane_model_path)
 
     #Load motion model...
-    motion_model_path=['/home/ponata/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV0.yaml',
-                       "/home/ponata/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV0.h5"]
+    motion_model_path=['/home/ponata/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV1.yaml',
+                       "/home/ponata/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV1.h5"]
     motion_model = lm.load_model(motion_model_path)
 
     print("Initial Settings are done.\n")
