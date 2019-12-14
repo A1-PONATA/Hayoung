@@ -1,5 +1,15 @@
 
 from tensorflow.python.keras.models import model_from_yaml
+import os
+import tensorflow as tf
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Or 2, 3, etc. other than 0
+
+# On CPU/GPU placement
+config = tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)
+config.gpu_options.allow_growth = True
+tf.compat.v1.Session(config=config)
+
 
 def load_model(path):
     yamlPath =path[0]
@@ -16,5 +26,13 @@ def load_model(path):
 
     return model
 
-print(load_model(['/home/pirl/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV2-1.yaml',
-            '/home/pirl/A1-PONATA/Hayoung/motion_model_test/motion_model_demoV2-1.h5']))
+print(load_model(['/home/pirl/A1-PONATA/Hayoung/motion_model_test/mm_v1.yaml',
+            '/home/pirl/A1-PONATA/Hayoung/motion_model_test/mm_v1.h5']))
+
+
+# print(load_model(['/home/pirl/A1-PONATA/Hayoung/lane_model_test/lane_model_v3-1.yaml',
+#  '/home/pirl/A1-PONATA/Hayoung/lane_model_test/lane_model_v3-1.h5']))
+
+# import tensorflow as tf
+#
+# print(tf.__version__)
