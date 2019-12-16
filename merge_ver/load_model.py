@@ -26,8 +26,9 @@ def load_model(path):
 
     return model
 
-print(load_model(['/home/pirl/A1-PONATA/Hayoung/motion_model_test/mm_v1.yaml',
-            '/home/pirl/A1-PONATA/Hayoung/motion_model_test/mm_v1.h5']))
+print(load_model(['/home/pirl/A1-PONATA/Hayoung/motion_model_test/mm_v3.yaml',
+            '/home/pirl/A1-PONATA/Hayoung/motion_model_test/mm_v3.h5']))
+
 
 
 # print(load_model(['/home/pirl/A1-PONATA/Hayoung/lane_model_test/lane_model_v3-1.yaml',
